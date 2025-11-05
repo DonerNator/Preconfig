@@ -2,6 +2,9 @@
 
 This project is a collection of PowerShell scripts designed to automate the configuration of new Windows machines. The process is divided into three stages, with a main script that calls other modules to perform specific tasks.
 
+> [!IMPORTANT]  
+> Als er enige problemen zijn met het script, of extra mogelijkheden toegevoegd kunnen worden. Laat het weten en creeër een Issue!
+
 ## How it works
 
 The process is divided into three stages:
