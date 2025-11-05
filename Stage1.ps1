@@ -5,8 +5,6 @@ Write-Host "=== Stage [1/3]: Copy Temp files + Keuze Menu + Bypass OOBE + Creati
 $tempPath = "C:\Temp\Preconfig"
 
 # Get the path of the current script to determine the source directory
-$scriptPath = $MyInvocation.MyCommand.Path
-$sourcePath = Split-Path $scriptPath
 
 Write-Host "Loading preconfig script..." -ForegroundColor Green
 
@@ -14,16 +12,6 @@ Write-Host "Loading preconfig script..." -ForegroundColor Green
 if (-not (Test-Path $tempPath)) {
     New-Item -ItemType Directory -Path $tempPath | Out-Null
 }
-
-
-# Copy entire folder content (files + subfolders)
-Copy-Item -Path "$sourcePath\*" -Destination $tempPath -Recurse -Force | Out-Null
-Write-Host "Files Successfully Copied, after reboot you can remove the USB" -ForegroundColor Green
-Start-Sleep -Seconds 2
-
-
-
-
 
 
 
