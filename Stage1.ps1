@@ -10,24 +10,6 @@ $sourcePath = Split-Path $scriptPath
 
 Write-Host "Loading preconfig script..." -ForegroundColor Green
 
-#Checking for internet.
-$dnsServers = @("8.8.8.8")
-$ping = $dnsServers | ForEach-Object { Test-Connection -ComputerName $_ -Count 5 -Quiet -ErrorAction Ignore}
-if (-not ($ping -contains $true)) {
-    Write-Host "No internet connection." -ForegroundColor Red
-    Start-Sleep -Seconds 1
-    Write-Host "Exiting in ..." -ForegroundColor Red
-    Start-Sleep -Seconds 1
-    Write-Host "3" -ForegroundColor Red
-    Start-Sleep -Seconds 1
-    Write-Host "2" -ForegroundColor Red
-    Start-Sleep -Seconds 1
-    Write-Host "1" -ForegroundColor Red
-    Start-Sleep -Seconds 1
-    Write-Host "Exiting..." -ForegroundColor Red
-    exit;
-}
-
 # Create temp directory if it doesn't exist
 if (-not (Test-Path $tempPath)) {
     New-Item -ItemType Directory -Path $tempPath | Out-Null
