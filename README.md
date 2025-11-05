@@ -51,13 +51,8 @@ The `Powershell modules` directory contains a collection of scripts that are cal
 *   **`Winget-Adobe-Install.ps1`**: Installs Adobe Acrobat Reader using Chocolatey, with a fallback to Winget.
 *   **`Winget-Install-7Zip.ps1`**: Installs 7-Zip using Winget.
 
-## Usage
-
-1.  Run `Setup - RUN AS ADMIN.cmd` as an administrator.
-2.  Follow the prompts in the console.
-3.  The script will reboot the machine multiple times.
 
 ## Disclaimer
 
-This script is provided as-is and without any warranty. Use it at your own risk. The author is not responsible for any damage to your system.
+This script is provided as-is and without any warranty. Use it at your own risk. I am is not responsible for any damage to your system.
 It is highly recommended to test the script in a virtual machine before using it on a production machine.
