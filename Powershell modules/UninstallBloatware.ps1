@@ -66,7 +66,6 @@ function Get-UninstallString {
     )
 
     foreach ($path in $paths) {
-
         $apps = Get-ItemProperty $path -ErrorAction SilentlyContinue | Where-Object {
             $_.DisplayName -like "*$ProgramName*"
         }
@@ -81,7 +80,6 @@ function Get-UninstallString {
 
 
 function Uninstall-Program {
-
     param([string]$ProgramName)
     Write-Verbose "Looking for $ProgramName..."
 
@@ -93,7 +91,6 @@ function Uninstall-Program {
     }
 
     Write-Host "Uninstalling $ProgramName..."
-
 
     if ($uninstallCmd -match "msiexec") {
         $arguments = $uninstallCmd -replace 'msiexec.exe', ''
@@ -112,6 +109,13 @@ function Uninstall-Program {
     }
     Write-Host "$ProgramName uninstallation attempted silently - Success!." -ForegroundColor Green
 }
+
+
+
+
+
+
+
 
 
 # -------- Remove Bloatware from CSV --------
@@ -136,10 +140,11 @@ foreach ($app in $bloatware) {
     $appName = $app.Name
     $appType = $app.Type
     Write-Host "Processing $appName ($appType)..." -ForegroundColor Cyan
-
+    
+    
+    ### Remove Appx package ###
     if ($appType -eq "Appx") {
 
-        # Remove Appx package
         $packages = Get-AppxPackage -AllUsers | Where-Object { $_.Name -like "*$appName*" }
         foreach ($pkg in $packages) {
             Write-Host "Removing Appx package: $($pkg.Name)"
@@ -164,9 +169,31 @@ foreach ($app in $bloatware) {
             }
         }
     }
+
+
+
+
+    ### Remove Win32 Apps ###
     elseif ($appType -eq "Win32") {
-        # Uninstall Win32 application
-        Uninstall-Program -ProgramName $appName
+
+        # First try quiet uninstallation
+        try {
+            Write-Host "Attempting quiet uninstallation of $appName..." -ForegroundColor Cyan
+            $uninstallString = Get-UninstallString -ProgramName $appName
+            if ($uninstallString -match "msiexec") {
+                $arguments = ($uninstallString -replace 'msiexec.exe', '') + " /quiet /norestart"
+                Start-Process "msiexec.exe" -ArgumentList $arguments -Wait -WindowStyle Hidden
+            } else {
+                $arguments = $uninstallString + " /S /silent /quiet /norestart"
+                Start-Process -FilePath $uninstallString -ArgumentList "/S /silent /quiet /norestart" -Wait -WindowStyle Hidden
+            }
+            Write-Host "$appName uninstalled silently" -ForegroundColor Green
+        }
+        catch {
+            # Fall back to normal uninstallation
+            Write-Warning "Quiet uninstallation failed for $appName. Attempting normal uninstallation..."
+            Uninstall-Program -ProgramName $appName
+        }
     }
     else {
         Write-Warning "Unknown app type '$appType' for '$appName'."
