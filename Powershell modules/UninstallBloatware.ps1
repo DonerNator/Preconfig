@@ -53,434 +53,126 @@ Write-Host "Temporary files cleaned up." -ForegroundColor Green
 
 
 
+
 # -------- Functions for uninstalling applications --------
-
-
-
-
-
-
 
 function Get-UninstallString {
 
-
-
     param([string]$ProgramName)
 
-
-
-
-
-
-
     $paths = @(
-
-
-
         "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
-
-
-
         "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
-
-
-
     )
-
-
-
-
-
-
 
     foreach ($path in $paths) {
 
-
-
         $apps = Get-ItemProperty $path -ErrorAction SilentlyContinue | Where-Object {
-
-
-
             $_.DisplayName -like "*$ProgramName*"
-
-
-
         }
-
-
-
         foreach ($app in $apps) {
-
-
-
             if ($app.UninstallString) {
-
-
-
                 return $app.UninstallString
-
-
-
             }
-
-
-
         }
-
-
-
     }
-
-
-
     return $null
-
-
-
 }
-
-
-
-
-
 
 
 function Uninstall-Program {
 
-
-
     param([string]$ProgramName)
-
-
-
-
-
-
-
     Write-Verbose "Looking for $ProgramName..."
-
-
 
     $uninstallCmd = Get-UninstallString -ProgramName $ProgramName
 
-
-
     if ($null -eq $uninstallCmd) {
-
-
-
         Write-Warning "$ProgramName not found in registry."
-
-
-
         return
-
-
-
     }
-
-
-
-
-
-
 
     Write-Host "Uninstalling $ProgramName..."
 
 
-
-
-
-
-
     if ($uninstallCmd -match "msiexec") {
-
-
-
         $arguments = $uninstallCmd -replace 'msiexec.exe', ''
-
-
-
         if ($arguments -notmatch "/quiet") {
-
-
-
             $arguments += " /quiet /norestart"
-
-
-
         }
-
-
-
         Start-Process "msiexec.exe" -ArgumentList $arguments -Wait -WindowStyle Hidden
-
-
-
     } else {
-
-
-
         # Wrap in quotes and ensure silent/unattended if supported
-
-
-
         if ($uninstallCmd -notmatch "/quiet") {
-
-
-
             $uninstallCmd += " /quiet /norestart"
 
-
-
         }
 
-
-
         Start-Process "cmd.exe" -ArgumentList "/c", $uninstallCmd -Wait -WindowStyle Hidden
-
-
-
     }
-
-
-
-
-
-
-
     Write-Host "$ProgramName uninstallation attempted silently - Success!." -ForegroundColor Green
-
-
-
 }
-
-
-
-
-
 
 
 # -------- Remove Bloatware from CSV --------
 
 
 
-
-
-
-
 # The script assumes it is running from C:\Temp\Preconfig on the target machine.
-
-
-
 $csvPath = "C:\Temp\Preconfig\Files\Bloatware.csv"
 
 
-
-
-
-
-
 if (-not (Test-Path $csvPath)) {
-
-
-
-    Write-Error "Bloatware.csv not found at $csvPath"
-
-
-
     # If the script is running from the project root, the relative path would be:
-
-
-
     # $csvPath = Resolve-Path -Path "../Files/Bloatware.csv"
-
-
-
     # For now, we assume the fixed path.
-
-
-
+    Write-Error "Bloatware.csv not found at $csvPath" 
     return
-
-
-
 }
-
-
-
-
-
-
 
 $bloatware = Import-Csv -Path $csvPath
 
-
-
-
-
-
-
 foreach ($app in $bloatware) {
-
-
-
     $appName = $app.Name
-
-
-
     $appType = $app.Type
-
-
-
-
-
-
-
     Write-Host "Processing $appName ($appType)..." -ForegroundColor Cyan
-
-
-
-
-
-
 
     if ($appType -eq "Appx") {
 
-
-
         # Remove Appx package
-
-
-
         $packages = Get-AppxPackage -AllUsers | Where-Object { $_.Name -like "*$appName*" }
-
-
-
         foreach ($pkg in $packages) {
-
-
-
             Write-Host "Removing Appx package: $($pkg.Name)"
-
-
-
             try {
-
-
-
                 Remove-AppxPackage -Package $pkg.PackageFullName -AllUsers -ErrorAction Stop
-
-
-
                 Write-Host "Removed: $($pkg.Name)" -ForegroundColor Green
-
-
-
             } catch {
-
-
-
                 Write-Warning "Failed to remove Appx package $($pkg.Name): $_"
-
-
-
             }
-
-
-
         }
-
-
-
-
-
-
 
         # Remove provisioned package
-
-
-
         $provisioned = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like "*$appName*" }
-
-
-
         foreach ($prov in $provisioned) {
-
-
-
             Write-Host "Removing provisioned package: $($prov.DisplayName)"
 
-
-
             try {
-
-
-
                 Remove-AppxProvisionedPackage -Online -PackageName $prov.PackageName -ErrorAction Stop
-
-
-
                 Write-Host "Removed provisioned package: $($prov.DisplayName)" -ForegroundColor Green
-
-
-
             } catch {
-
-
-
                 Write-Warning "Failed to remove provisioned package $($prov.DisplayName): $_"
-
-
-
             }
-
-
-
         }
-
-
-
     }
-
-
-
     elseif ($appType -eq "Win32") {
-
-
-
         # Uninstall Win32 application
-
-
-
         Uninstall-Program -ProgramName $appName
-
-
-
     }
-
-
-
     else {
-
-
-
         Write-Warning "Unknown app type '$appType' for '$appName'."
-
-
-
     }
-
-
-
 }
-
-
-
-
 
 
 
 Write-Host "Bloatware removal process completed." -ForegroundColor Green
-
-
