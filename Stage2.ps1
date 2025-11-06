@@ -31,6 +31,7 @@ Start-Sleep -Seconds 5
 
 Import-module "C:\Temp\Preconfig\Powershell modules\Set-Service.percom-To-Hidden.ps1"
 Start-Process powershell.exe -Verb RunAs -ArgumentList "-WindowStyle Hidden", "-ExecutionPolicy Bypass", "-File `"C:\Temp\Preconfig\Powershell modules\Set-Hostname-And-Password-Service.percom.ps1`""; Start-Sleep 10;
+write-Host "Hostname and password set." -ForegroundColor Green
 
 
 
