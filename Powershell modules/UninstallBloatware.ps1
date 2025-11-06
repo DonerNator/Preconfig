@@ -54,10 +54,9 @@ Write-Host "Temporary files cleaned up." -ForegroundColor Green
 
 
 
-# -------- Functions for uninstalling applications --------
+# -------- Functions for uninstalling applications, deze worden gebruikt in de uninstaller op het einde van het script  --------
 
 function Get-UninstallString {
-
     param([string]$ProgramName)
 
     $paths = @(
@@ -77,7 +76,6 @@ function Get-UninstallString {
     }
     return $null
 }
-
 
 function Uninstall-Program {
     param([string]$ProgramName)
@@ -113,14 +111,7 @@ function Uninstall-Program {
 
 
 
-
-
-
-
-
 # -------- Remove Bloatware from CSV --------
-
-
 
 # The script assumes it is running from C:\Temp\Preconfig on the target machine.
 $csvPath = "C:\Temp\Preconfig\Files\Bloatware.csv"
