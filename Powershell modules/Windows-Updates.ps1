@@ -46,9 +46,19 @@ Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop | Out-Null
 # Retrieve all available updates
 $updates = Get-WUList -MicrosoftUpdate
 
-# Filter out updates with "Cumulative Update" in the title
+# Filter out cumulative updates and Windows 11 feature/upgrade (big) updates
+$excludedPatterns = @(
+    '(?i)cumul.*update',                 # cumulative updates
+    '(?i)windows\s*11\s*version\s*\d{2}H?\d' # "Windows 11 version 22H2" etc.
+)
+
 $filteredUpdates = $updates | Where-Object {
-    $_.Title -notmatch '(?i)cumul.*update'
+    $title = $_.Title -as [string]
+    if (-not $title) { return $false }   # skip items without a title
+    foreach ($pat in $excludedPatterns) {
+        if ($title -match $pat) { return $false }
+    }
+    return $true
 }
 
 if (-not $filteredUpdates) {
