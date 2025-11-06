@@ -14,7 +14,6 @@ if (-not (Test-Path $tempPath)) {
 }
 
 
-# THIS IS A TEST COPY - IN PRODUCTION, FILES WILL BE COPIED FROM NETWORK SHARE
 
 # ======================================= Begin Keuze Menu =======================================
 
