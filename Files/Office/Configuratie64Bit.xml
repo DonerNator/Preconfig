@@ -1,6 +1,5 @@
-<Configuration ID="b38daac2-3353-43a1-a7d1-d6bdafdb018c">
-  <Remove All="TRUE" />
-  <Add OfficeClientEdition="64" Channel="SemiAnnual">
+<Configuration ID="cf3d6d82-3393-4dee-8910-df7b2d983de9">
+  <Add OfficeClientEdition="64" Channel="Current">
     <Product ID="O365BusinessRetail">
       <Language ID="nl-nl" />
       <ExcludeApp ID="Access" />
