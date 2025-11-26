@@ -34,6 +34,9 @@ Start-Process powershell.exe -Verb RunAs -ArgumentList "-WindowStyle Hidden", "-
 write-Host "Hostname and password set." -ForegroundColor Green
 
 
+Import-Module "C:\Temp\Preconfig\Powershell modules\Uninstall-HP-Full-Cleanup-Script.ps1"
+
+
 
 # Ask to restart computer to apply changes
 do {
