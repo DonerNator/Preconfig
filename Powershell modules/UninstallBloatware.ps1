@@ -193,4 +193,63 @@ foreach ($app in $bloatware) {
 
 
 
+
+
+# ---- Remove HP Connection Optimizer ----
+
+
+Write-Host "Attempting to remove HP Connection Optimizer..." -ForegroundColor Yellow
+$HPCOuninstall = "C:\Program Files (x86)\InstallShield Installation Information\{6468C4A5-E47E-405F-B675-A70A70983EA6}\setup.exe"
+
+if (Test-Path $HPCOuninstall -PathType Leaf){
+Try {
+        & $HPCOuninstall -runfromtemp -l0x0413  -removeonly -s -f1C:\Temp\Preconfig\Files\uninstallHPCO.iss
+        Start-Sleep -Seconds 20
+        Write-Host "Successfully uninstalled HP Connection Optimizer" -ForegroundColor Green
+        }
+Catch {
+        Write-Host -Value  "Error uninstalling HP Connection Optimizer: RETRYING DIFFERENT METHOD" -ForegroundColor Red
+        function Uninstall-ByRegistryName {
+            param (
+                [string]$AppName
+            )
+            $uninstallKeys = @(
+                "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+                "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+            )
+        
+            foreach ($keyPath in $uninstallKeys) {
+                $apps = Get-ItemProperty $keyPath | Where-Object { $_.DisplayName -like "*$AppName*" }
+                foreach ($app in $apps) {
+                    Write-Host "Found: $($app.DisplayName)" -ForegroundColor Yellow
+                    if ($app.UninstallString) {
+                        # Ensure quiet uninstall by appending /quiet and /norestart if not already present
+                        $uninstallCmd = $app.UninstallString
+                        if ($uninstallCmd -notmatch "/quiet") { $uninstallCmd += " /quiet" }
+                        if ($uninstallCmd -notmatch "/qn") { $uninstallCmd += " /qn" }
+                        if ($uninstallCmd -notmatch "/norestart") { $uninstallCmd += " /norestart" }
+        
+                        Write-Host "Uninstalling via: $uninstallCmd" -ForegroundColor Cyan
+                        try {
+                            Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "$uninstallCmd" -Wait -NoNewWindow
+                            Write-Host "Uninstalled $($app.DisplayName) Wacht een paar seconden." -ForegroundColor Green
+                        } catch {
+                            Write-Warning "Failed to uninstall $($app.DisplayName): $_"
+                        }
+                    }
+                }
+            }
+        }
+
+        # Uninstall HP Connection Optimizer using registry name
+        Uninstall-ByRegistryName -AppName "HP Connection Optimizer"
+        }
+}
+Else {
+        Write-Host "HP Connection Optimizer not found" -ForegroundColor Yellow
+}
+# ---- End of HP Connection Optimizer Uninstall ----
+
+
+
 Write-Host "Bloatware removal process completed." -ForegroundColor Green
