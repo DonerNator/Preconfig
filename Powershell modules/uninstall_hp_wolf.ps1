@@ -80,7 +80,7 @@ foreach ($comp in $components) {
             Write-Host " Found." -ForegroundColor Green
             foreach ($p in $packages) {
                 Write-Host "  [Method 1] Attempting uninstall of '$($p.Name)'..."
-                $p | Uninstall-Package -Force -ErrorAction Stop
+                $p | Uninstall-Package -Force -ErrorAction Stop | Out-Null # OUTPUT SUPPRESSION DonerNator/issue7
                 Write-Host "  [Method 1] Success." -ForegroundColor Green
                 $resolved = $true
             }
