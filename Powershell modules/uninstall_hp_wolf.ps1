@@ -103,5 +103,4 @@ foreach ($comp in $components) {
 }
 
 Write-Host "`n----------------------------------------------------" -ForegroundColor Gray
-Write-Host "Uninstallation sequence finished." -ForegroundColor Cyan
-Write-Host "A reboot is highly recommended to clear any locked files." -ForegroundColor Yellow
+Write-Host "Uninstallation sequence of HP Wolf Security finished." -ForegroundColor Cyan

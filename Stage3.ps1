@@ -2,7 +2,7 @@
 Start-Sleep -Seconds 15
  Write-Host "=== Stage [3/3]: Bloatware removal + AV Install + Other Settings + Cleanup and finalization === " -ForegroundColor Green
 
-# Import-Module "C:\Temp\Preconfig\Powershell modules\Uninstall-HP-Full-Cleanup-Script.ps1" - Oude methode - Mocht nieuwe methode werken, deze regel verwijderen
+
 Import-Module "C:\Temp\Preconfig\Powershell modules\uninstall_hp_wolf.ps1"
 
 
