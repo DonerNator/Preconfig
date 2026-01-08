@@ -17,12 +17,12 @@ Unregister-ScheduledTask -TaskName "Run_Stage2" -Confirm:$false
 
 Import-Module "C:\Temp\Preconfig\Powershell modules\Exit-Start-Menu.ps1"
 
+Import-Module "C:\Temp\Preconfig\Powershell modules\Set-PowerCFG.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Set-Correct-Time.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Set-DutchSettings.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Set-UAC.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Set-RegistryKeys.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\CtrlAltDelFix-V2.ps1"
-Import-Module "C:\Temp\Preconfig\Powershell modules\Set-PowerCFG.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Remove-DefaultUser0.ps1"
 Import-Module "C:\Temp\Preconfig\Powershell modules\Winget-Adobe-Install.ps1"
 
